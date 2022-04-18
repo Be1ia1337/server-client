@@ -18,7 +18,7 @@
  * 	@param servaddr for setting ip and port
  * 	@return void
  */
-int connection(int listening_socket, int client_sock, struct sockaddr_in* servaddr);
+void connection(int listening_socket, int client_sock, struct sockaddr_in* servaddr);
 
 /** @brief comunicating with clients
  * 	@param client_sock is adress of clients socket 
@@ -38,20 +38,18 @@ int main ()
 	struct sockaddr_in servaddr;
 
 	// listening_socket creation, binding, assigning with IP and Port
-	client_sock = connection(listening_socket, client_sock, &servaddr);
-
-	// Function for chatting between client and server
-	//communicating(client_sock);
+	connection(listening_socket, client_sock, &servaddr);
    
 	// After chatting close the listening_socket
 	close(listening_socket);
 }
 
-int connection(int listening_socket, int client_sock, struct sockaddr_in* servaddr)
+void connection(int listening_socket, int client_sock, struct sockaddr_in* servaddr)
 {
 	int* new_sock;
 	int len;
 	struct sockaddr_in* client_adress;
+
 	// listening_socket create and verification
 	if ((listening_socket = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
     	printf("listening_socket creation failed...\n");
@@ -69,12 +67,13 @@ int connection(int listening_socket, int client_sock, struct sockaddr_in* servad
 	const int optional = 1;
 	const socklen_t optional_length = sizeof(optional);
 	setsockopt(listening_socket , SOL_SOCKET, SO_REUSEPORT , &optional , optional_length);
+	
     if ((bind(listening_socket, (struct sockaddr *)servaddr, sizeof(*servaddr))) < 0) {
        	printf("listening_socket bind failed...\n");
        	printf("Something went wrong with read()! %s\n", strerror(errno));
        	exit(0);
 	}
-        printf("listening_socket successfully binded..\n");
+    printf("listening_socket successfully binded..\n");
 
 	// Now server is ready to listen and verification
 	if ((listen(listening_socket, 5)) != 0) {
@@ -96,17 +95,15 @@ int connection(int listening_socket, int client_sock, struct sockaddr_in* servad
 	    	printf("server accept failed...\n");
 		    exit(0);
     	}
-    printf("server accept the client...\n");
+
+        printf("server accept the client...\n");
         result = pthread_create(&client_thread, NULL, communicating ,  (void*) new_sock);
+        
         if(result < 0) {
     	    puts("Can't create thread :-(");
     	    exit(0);
         }
     }
-
- 
-
-	return client_sock;
 }
 
 void* communicating(void* client_sock)

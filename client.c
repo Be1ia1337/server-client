@@ -76,7 +76,6 @@ int main(int argc, char *argv[])
         	exit(0);
         }
 
-
         if(strncmp(command, "help", 4) == 0) {
             help();
             continue;
@@ -103,8 +102,7 @@ int main(int argc, char *argv[])
             }
         	memcpy(ip, command, pos - command);
         	char ip_for_validate[sizeof(ip) + 1];
-	
-            
+	            
         	memcpy(ip_for_validate, ip, sizeof(ip) + 1);
             if(!ip_validation(ip_for_validate)) {
                 puts("Wrong IP!");
@@ -249,10 +247,9 @@ void  INThandler(int sig)
 		exit(0);
 	}
 	else {
-		puts("Wrong argument!");
-		printf("$ ");
 		signal(SIGINT, INThandler);
 	}
+    printf("$ ");
 	getchar(); // Get new line character
 }
 
