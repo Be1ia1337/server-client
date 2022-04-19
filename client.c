@@ -16,20 +16,18 @@ int is_connected;
 char *p_command;
 
 /** @brief connection with server
- * 	@param listening_socket is socket that will beconnected to ip and port
  *  @param servaddr is structure for assigning ip and port of server
  * 	@param ip we will connect
  * 	@param port we will connect
  * 	@return void
  */
-int connection(int listening_socket, struct sockaddr_in* servaddr, char* ip, unsigned short int port);
+void connection(struct sockaddr_in* servaddr, char* ip, unsigned short int port);
 
 /** @brief sending, recievinf and working wih messages
- * 	@param listening_socket is created socket that will help with communication
  * 	@param command is message that will be send to server
  * 	@return void
  */
-void command_execution(int listening_socket, char* command);
+void command_execution(char* command);
 
 /** @brief function for validation of inputing ip
  *  @param ip is ip that will be validate
@@ -123,7 +121,7 @@ int main(int argc, char *argv[])
             }
 
         	// Socket creation and connection to ip and port
-			listening_socket = connection(listening_socket, &servaddr, ip, port);
+			connection( &servaddr, ip, port);
 
 			is_connected = 1;
 			continue;
@@ -136,7 +134,7 @@ int main(int argc, char *argv[])
         }
 
 		// Simple chat for command execution 
-		command_execution(listening_socket, command);
+		command_execution(command);
 
 		if ((strncmp(command, "disconnect", 10)) == 0) {
 			command = p_command;
@@ -149,7 +147,7 @@ int main(int argc, char *argv[])
 	free(p_command);
 }
 
-int connection(int listening_socket, struct sockaddr_in* servaddr, char* ip, unsigned short int port)
+void connection(struct sockaddr_in* servaddr, char* ip, unsigned short int port)
 {
 	// socket create and verificationi
 	
@@ -171,10 +169,9 @@ int connection(int listening_socket, struct sockaddr_in* servaddr, char* ip, uns
 		exit(0);
 	}
 	printf("Connected to the server!\n");
-	return listening_socket;
 }
 
-void command_execution(int listening_socket, char* command)
+void command_execution(char* command)
 {
 	int n;
 	int issend, isrecv;
